@@ -1,0 +1,2 @@
+"""Captura e reconhecimento visual."""
+

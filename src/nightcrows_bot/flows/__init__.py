@@ -1,0 +1,2 @@
+"""Fluxos visuais da automação."""
+
