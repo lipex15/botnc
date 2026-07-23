@@ -22,7 +22,22 @@ class WindowsInput:
         if not (0 <= point.x < 1920 and 0 <= point.y < 1080):
             raise ValueError(f"Clique fora da tela permitida: ({point.x}, {point.y})")
         pyautogui.moveTo(point.x, point.y, duration=duration)
-        pyautogui.click()
+        self._held_left_click()
+
+    def focus_primary_screen(self) -> None:
+        """Dá foco ao conteúdo no monitor principal sem clicar na área do jogo."""
+        if self.simulation_mode:
+            return
+        pyautogui.moveTo(960, 10, duration=0.12)
+        self._held_left_click(hold_seconds=0.06)
+
+    @staticmethod
+    def _held_left_click(hold_seconds: float = 0.10) -> None:
+        pyautogui.mouseDown(button="left")
+        try:
+            time.sleep(hold_seconds)
+        finally:
+            pyautogui.mouseUp(button="left")
 
     def press(self, key: str) -> None:
         if self.simulation_mode:

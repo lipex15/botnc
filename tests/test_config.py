@@ -4,6 +4,7 @@ from nightcrows_bot.core.config import AppConfig
 def test_default_resolution_is_fixed_to_full_hd() -> None:
     config = AppConfig()
     assert (config.screen.width, config.screen.height) == (1920, 1080)
+    assert config.screen.primary_only is True
     assert config.run.spot == "T.A 1 — Spot 45"
     assert config.run.travel_timeout_seconds == 120
 

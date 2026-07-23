@@ -21,6 +21,7 @@ O projeto trabalha somente com:
 - Se o Auto já estiver ativo, a tecla Q não é pressionada novamente.
 - Controles de iniciar, pausar, continuar e parar.
 - Validação obrigatória da resolução 1920×1080.
+- Em computadores com vários monitores, a captura e os cliques usam o monitor principal.
 - Estrutura modular para farm, retorno por vida baixa, compra de poção, morte e agenda.
 - Configuração do usuário salva localmente e ignorada pelo Git.
 

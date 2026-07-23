@@ -123,7 +123,10 @@ class TA1Spot45Flow:
         self.stop_event = stop_event
         self.pause_event = pause_event
         self.log = log
-        self.capture = ScreenCapture(config.screen.monitor)
+        self.capture = ScreenCapture(
+            monitor=config.screen.monitor,
+            primary_only=config.screen.primary_only,
+        )
         self.matcher = TemplateMatcher()
         self.input = WindowsInput(config.run.simulation_mode)
         self.poll_seconds = max(0.1, config.vision.poll_interval_ms / 1000)
@@ -146,12 +149,25 @@ class TA1Spot45Flow:
             )
             return
 
+        self.input.focus_primary_screen()
+        self.log("Foco aplicado ao cliente visível no monitor principal.")
+        self._wait(0.4)
+
         menu_ta = self._find_once(TA_MENU)
         if menu_ta.found:
             self.log("O Menu já estava aberto.")
         else:
             self._click_match(menu, "Abrindo o Menu")
-            menu_ta = self._wait_for(TA_MENU, timeout=12)
+            menu_ta = self._wait_for_optional(TA_MENU, timeout=4)
+            if not menu_ta.found:
+                self.log(
+                    "O primeiro clique não abriu o Menu; repetindo após o foco do jogo."
+                )
+                refreshed_menu = self._find_once(MENU_BUTTON)
+                if refreshed_menu.found:
+                    menu = refreshed_menu
+                self._click_match(menu, "Tentando abrir o Menu novamente")
+                menu_ta = self._wait_for(TA_MENU, timeout=12)
         self._click_match(menu_ta, "Abrindo T.A.")
         self._click_match(
             self._wait_for(ENTER_TA1, timeout=15),
@@ -233,6 +249,21 @@ class TA1Spot45Flow:
             f"Melhor confiança observada: {best_score:.0%}. "
             f"Captura de diagnóstico: {debug_path}."
         )
+
+    def _wait_for_optional(self, target: VisualTarget, timeout: float) -> MatchResult:
+        remaining = timeout
+        best_score = 0.0
+        while remaining > 0:
+            self._checkpoint()
+            result = self._find_once(target)
+            best_score = max(best_score, result.confidence)
+            if result.found:
+                self.log(f"{target.name.capitalize()} confirmado ({result.confidence:.0%}).")
+                return result
+            interval = min(self.poll_seconds, remaining)
+            self._wait(interval)
+            remaining -= interval
+        return MatchResult(found=False, confidence=best_score)
 
     def _save_failure_region(self, frame: np.ndarray | None, target: VisualTarget) -> Path:
         directory = PROJECT_ROOT / "screenshots" / "failures"

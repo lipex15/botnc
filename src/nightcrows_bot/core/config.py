@@ -16,6 +16,7 @@ class ScreenConfig:
     width: int = 1920
     height: int = 1080
     monitor: int = 1
+    primary_only: bool = True
 
 
 @dataclass(slots=True)

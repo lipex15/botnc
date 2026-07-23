@@ -32,12 +32,16 @@ def test_real_flow_keeps_the_expected_action_order(monkeypatch) -> None:
         def __init__(self) -> None:
             self.clicks: list[ScreenPoint] = []
             self.keys: list[str] = []
+            self.focus_calls = 0
 
         def click(self, point: ScreenPoint, duration: float = 0.15) -> None:
             self.clicks.append(point)
 
         def press(self, key: str) -> None:
             self.keys.append(key)
+
+        def focus_primary_screen(self) -> None:
+            self.focus_calls += 1
 
     config = AppConfig()
     config.run.simulation_mode = False
@@ -56,6 +60,15 @@ def test_real_flow_keeps_the_expected_action_order(monkeypatch) -> None:
     monkeypatch.setattr(flow, "_wait_for_travel_end", lambda: None)
     monkeypatch.setattr(
         flow,
+        "_wait_for_optional",
+        lambda _target, timeout: MatchResult(
+            found=True,
+            confidence=1.0,
+            center=ScreenPoint(100, 200),
+        ),
+    )
+    monkeypatch.setattr(
+        flow,
         "_wait_for",
         lambda _target, timeout: MatchResult(
             found=True,
@@ -72,6 +85,7 @@ def test_real_flow_keeps_the_expected_action_order(monkeypatch) -> None:
     flow.run()
 
     assert fake_input.keys == ["m", "m", "q", "l"]
+    assert fake_input.focus_calls == 1
     assert fake_input.clicks == [
         ScreenPoint(100, 200),
         ScreenPoint(100, 200),

@@ -2,7 +2,8 @@
   "screen": {
     "width": 1920,
     "height": 1080,
-    "monitor": 1
+    "monitor": 1,
+    "primary_only": true
   },
   "run": {
     "spot": "T.A 1 — Spot 45",
