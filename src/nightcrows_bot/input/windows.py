@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ctypes
 import time
 
 import pyautogui
@@ -18,6 +19,8 @@ class WindowsInput:
     def click(self, point: ScreenPoint, duration: float = 0.15) -> None:
         if self.simulation_mode:
             return
+        if not (0 <= point.x < 1920 and 0 <= point.y < 1080):
+            raise ValueError(f"Clique fora da tela permitida: ({point.x}, {point.y})")
         pyautogui.moveTo(point.x, point.y, duration=duration)
         pyautogui.click()
 
@@ -26,6 +29,12 @@ class WindowsInput:
             return
         pyautogui.press(key)
 
+    @staticmethod
+    def emergency_stop_pressed() -> bool:
+        """Ctrl+Shift+F12 funciona mesmo com o aplicativo minimizado."""
+        user32 = ctypes.windll.user32
+        keys = (0x11, 0x10, 0x7B)  # Ctrl, Shift e F12
+        return all(bool(user32.GetAsyncKeyState(key) & 0x8000) for key in keys)
+
     def wait(self, seconds: float) -> None:
         time.sleep(seconds)
-

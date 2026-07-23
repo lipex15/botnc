@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -77,31 +77,41 @@ class MainWindow(QMainWindow):
         form = QFormLayout()
         form.setSpacing(13)
         self.spot = QComboBox()
-        self.spot.setEditable(True)
-        self.spot.addItems(["Spot 1", "Spot 2", "Spot 3"])
+        self.spot.addItems(["T.A 1 — Spot 45"])
         form.addRow("Local de farm", self.spot)
 
         self.farm_minutes = self._spin(1, 1440, " min")
-        form.addRow("Tempo de farm", self.farm_minutes)
+        form.addRow("Tempo de farm (em breve)", self.farm_minutes)
 
         self.low_hp = self._spin(1, 99, "%")
-        form.addRow("Retornar com vida", self.low_hp)
+        form.addRow("Retorno por vida (em breve)", self.low_hp)
 
         self.max_deaths = self._spin(1, 100, " mortes")
-        form.addRow("Limite de mortes", self.max_deaths)
+        form.addRow("Mortes (em breve)", self.max_deaths)
 
         self.agenda_minutes = self._spin(1, 1440, " min")
-        form.addRow("Tempo na agenda", self.agenda_minutes)
+        form.addRow("Agenda (em breve)", self.agenda_minutes)
+        for future_control in (
+            self.farm_minutes,
+            self.low_hp,
+            self.max_deaths,
+            self.agenda_minutes,
+        ):
+            future_control.setEnabled(False)
+            future_control.setToolTip("Será ativado em um próximo fluxo.")
         layout.addLayout(form)
 
         self.simulation = QCheckBox("Modo de simulação (sem cliques)")
-        self.simulation.setToolTip("Mantenha ativado enquanto os fluxos estão sendo configurados.")
+        self.simulation.setToolTip(
+            "Na simulação, o app apenas confirma o botão Menu e não envia ações."
+        )
         layout.addWidget(self.simulation)
         layout.addStretch()
 
         note = QLabel(
-            "Os módulos de farm, HP, poção, morte e agenda serão ativados conforme "
-            "recebermos seus indicadores visuais."
+            "O fluxo T.A 1 — Spot 45 está disponível. Ao testar, o app minimiza, "
+            "aguarda 3 segundos e observa o jogo que estiver visível. "
+            "Emergência: Ctrl+Shift+F12."
         )
         note.setWordWrap(True)
         note.setObjectName("Subtitle")
@@ -131,7 +141,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.log, 1)
 
         buttons = QHBoxLayout()
-        self.start_button = QPushButton("Iniciar")
+        self.start_button = QPushButton("Testar fluxo")
         self.start_button.setObjectName("Primary")
         self.pause_button = QPushButton("Pausar")
         self.pause_button.setEnabled(False)
@@ -158,6 +168,7 @@ class MainWindow(QMainWindow):
         self.controller.status_changed.connect(self._status_changed)
         self.controller.log_emitted.connect(self.log.appendPlainText)
         self.controller.elapsed_changed.connect(self._elapsed_changed)
+        self.controller.run_finished.connect(self._run_finished)
 
     def _load_fields(self) -> None:
         self.spot.setCurrentText(self.config.run.spot)
@@ -168,7 +179,7 @@ class MainWindow(QMainWindow):
         self.simulation.setChecked(self.config.run.simulation_mode)
 
     def _read_fields(self) -> AppConfig:
-        self.config.run.spot = self.spot.currentText().strip() or "Spot 1"
+        self.config.run.spot = self.spot.currentText().strip() or "T.A 1 — Spot 45"
         self.config.run.farm_minutes = self.farm_minutes.value()
         self.config.run.low_hp_percent = self.low_hp.value()
         self.config.run.max_deaths = self.max_deaths.value()
@@ -191,6 +202,9 @@ class MainWindow(QMainWindow):
                 "Resolução incompatível",
                 "Configure a tela principal em 1920×1080 antes de iniciar.",
             )
+            return
+
+        QTimer.singleShot(150, self.showMinimized)
 
     def _pause_or_resume(self) -> None:
         self.controller.pause_or_resume()
@@ -199,10 +213,22 @@ class MainWindow(QMainWindow):
         self.status_badge.setText(status)
         running = status == "Executando"
         paused = status == "Pausado"
-        self.start_button.setEnabled(not running and not paused)
+        stopping = status == "Parando"
+        active = running or paused or stopping
+        self.start_button.setEnabled(not active)
         self.pause_button.setEnabled(running or paused)
         self.stop_button.setEnabled(running or paused)
         self.pause_button.setText("Continuar" if paused else "Pausar")
+
+    def _run_finished(self, success: bool, message: str) -> None:
+        if self.isMinimized():
+            self.showNormal()
+        self.raise_()
+        self.activateWindow()
+        if success:
+            QMessageBox.information(self, "Teste concluído", message)
+        else:
+            QMessageBox.warning(self, "Teste interrompido", message)
 
     def _elapsed_changed(self, seconds: int) -> None:
         hours, remainder = divmod(seconds, 3600)
@@ -213,4 +239,3 @@ class MainWindow(QMainWindow):
         self.controller.stop()
         save_config(self._read_fields())
         event.accept()
-

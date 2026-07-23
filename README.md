@@ -11,16 +11,21 @@ O projeto trabalha somente com:
 
 > A automação inicia em **modo de simulação**. Nesse modo ela registra decisões, mas não envia cliques nem teclas.
 
-## Base preparada
+## Fluxo disponível
 
-- Interface para configurar spot, duração do farm, limite de mortes, tempo de agenda e vida mínima.
+- **T.A 1 — Spot 45:** abre o Menu, entra em Kildebat, abre o mapa, seleciona
+  Arena de Treinamento Nv. 45, marca o destino, acompanha o deslocamento, ativa o Auto
+  e confirma o modo de repouso.
+- Cada ação depende da confirmação visual da tela anterior.
+- A chegada é detectada pela estabilização do minimapa, com limite de 120 segundos.
+- Se o Auto já estiver ativo, a tecla Q não é pressionada novamente.
 - Controles de iniciar, pausar, continuar e parar.
 - Validação obrigatória da resolução 1920×1080.
 - Estrutura modular para farm, retorno por vida baixa, compra de poção, morte e agenda.
-- Diretório versionado para os modelos de imagem que serão fornecidos durante a construção dos fluxos.
 - Configuração do usuário salva localmente e ignorada pelo Git.
 
-Os fluxos ainda não fazem ações reais. Cada um será habilitado depois que suas regras, imagens indicadoras, coordenadas e condições de sucesso forem definidas.
+Os módulos de vida baixa, compra de poção, morte e agenda continuam reservados para as
+próximas etapas.
 
 ## Executar no Windows
 
@@ -32,6 +37,20 @@ No PowerShell, dentro desta pasta:
 ```
 
 O primeiro comando cria o ambiente e instala as dependências. Nas próximas execuções, basta usar `./scripts/run.ps1`.
+
+## Primeiro teste
+
+1. Deixe em primeiro plano o cliente do Night Crows que deve receber as ações.
+2. Abra o aplicativo e mantenha **Modo de simulação** ativo.
+3. Clique em **Testar fluxo**. O app será minimizado e a simulação deverá reconhecer o
+   botão Menu sem clicar.
+4. Para o teste completo, desative o modo de simulação e clique novamente em
+   **Testar fluxo**.
+5. O aplicativo aguardará três segundos antes de começar.
+
+Não alterne de cliente durante o fluxo. Para uma parada imediata mesmo com o app
+minimizado, pressione **Ctrl+Shift+F12**. Mover o mouse para o canto superior esquerdo
+também aciona a proteção antes da próxima ação de mouse.
 
 ## Organização
 
@@ -45,7 +64,7 @@ tests/                  verificações automatizadas
 ## Segurança operacional
 
 - O modo de simulação vem ativado por padrão.
+- Ctrl+Shift+F12 solicita uma parada global de emergência.
 - Mover o mouse para o canto superior esquerdo aciona a proteção do controlador de mouse.
 - O motor para ao detectar uma resolução diferente de 1920×1080.
-- Um fluxo deve confirmar visualmente o resultado antes de prosseguir.
-
+- Cada etapa tem tempo limite; uma falha visual interrompe o fluxo sem continuar clicando.

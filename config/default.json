@@ -5,16 +5,17 @@
     "monitor": 1
   },
   "run": {
-    "spot": "Spot 1",
+    "spot": "T.A 1 — Spot 45",
     "farm_minutes": 60,
     "low_hp_percent": 25,
     "max_deaths": 3,
     "agenda_minutes": 30,
-    "simulation_mode": true
+    "simulation_mode": true,
+    "start_delay_seconds": 3,
+    "travel_timeout_seconds": 120
   },
   "vision": {
     "default_confidence": 0.88,
     "poll_interval_ms": 500
   }
 }
-

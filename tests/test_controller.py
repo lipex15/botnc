@@ -6,4 +6,4 @@ def test_expected_resolution() -> None:
     config = AppConfig()
     assert (config.screen.width, config.screen.height) == (1920, 1080)
     assert BotStatus.IDLE.value == "Parado"
-
+    assert BotStatus.COMPLETED.value == "Concluído"

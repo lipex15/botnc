@@ -4,6 +4,8 @@ from nightcrows_bot.core.config import AppConfig
 def test_default_resolution_is_fixed_to_full_hd() -> None:
     config = AppConfig()
     assert (config.screen.width, config.screen.height) == (1920, 1080)
+    assert config.run.spot == "T.A 1 — Spot 45"
+    assert config.run.travel_timeout_seconds == 120
 
 
 def test_config_round_trip() -> None:
@@ -16,4 +18,3 @@ def test_config_round_trip() -> None:
     assert restored.run.spot == "Mina Norte"
     assert restored.run.max_deaths == 4
     assert restored.run.simulation_mode is True
-

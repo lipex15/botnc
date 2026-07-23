@@ -20,12 +20,14 @@ class ScreenConfig:
 
 @dataclass(slots=True)
 class RunConfig:
-    spot: str = "Spot 1"
+    spot: str = "T.A 1 — Spot 45"
     farm_minutes: int = 60
     low_hp_percent: int = 25
     max_deaths: int = 3
     agenda_minutes: int = 30
     simulation_mode: bool = True
+    start_delay_seconds: int = 3
+    travel_timeout_seconds: int = 120
 
 
 @dataclass(slots=True)
@@ -65,4 +67,3 @@ def save_config(config: AppConfig) -> None:
         json.dumps(config.to_dict(), ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-

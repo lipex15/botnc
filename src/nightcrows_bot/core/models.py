@@ -9,6 +9,7 @@ class BotStatus(str, Enum):
     RUNNING = "Executando"
     PAUSED = "Pausado"
     STOPPING = "Parando"
+    COMPLETED = "Concluído"
     ERROR = "Erro"
 
 
@@ -31,4 +32,3 @@ class MatchResult:
     found: bool
     confidence: float
     center: ScreenPoint | None = None
-
