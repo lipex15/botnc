@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/BotNC.App/BotNC.App.csproj" />
+  <Project Path="src/BotNC.Core/BotNC.Core.csproj" />
+  <Project Path="src/BotNC.Infrastructure.Windows/BotNC.Infrastructure.Windows.csproj" />
+</Solution>

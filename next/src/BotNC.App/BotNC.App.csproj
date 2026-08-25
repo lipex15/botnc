@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>BotNC.App</RootNamespace>
+    <AssemblyName>BotNC</AssemblyName>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../BotNC.Core/BotNC.Core.csproj" />
+    <ProjectReference Include="../BotNC.Infrastructure.Windows/BotNC.Infrastructure.Windows.csproj" />
+  </ItemGroup>
+</Project>

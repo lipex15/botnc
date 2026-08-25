@@ -9,8 +9,11 @@ __pycache__/
 .vscode/
 build/
 dist/
+**/bin/
+**/obj/
+.vs/
+next/artifacts/
 *.egg-info/
 logs/
 screenshots/
 config/user.json
-
