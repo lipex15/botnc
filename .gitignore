@@ -12,8 +12,12 @@ dist/
 **/bin/
 **/obj/
 .vs/
-next/artifacts/
+artifacts/
 *.egg-info/
 logs/
 screenshots/
-config/user.json
+legacy/python-v1/config/user.json
+legacy/python-v1/Abrir Bot Sepheras.vbs
+legacy/python-v1/auto_masmorra.py
+legacy/python-v1/confirmacao.png
+legacy/python-v1/descanso.png
